@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Users List</title>
+    <h:outputStylesheet name="styles.css" /> <!-- Optional: Include CSS styles -->
+</h:head>
+
+<h:body>
+    <h:form>
+        <!-- Display logged-in user's name -->
+        <h:outputText value="Welcome, #{loginBean.username}" rendered="#{not empty loginBean.username}" />
+
+        <!-- Button to trigger the Add User dialog -->
+        <h:commandButton value="Add User" action="#{userBean.prepareCreate()}" 
+                         onclick="PF('userDialog').show();" type="button" styleClass="ui-button-success" />
+
+        <!-- DataTable to display users -->
+        <p:dataTable id="userTable" value="#{userBean.users}" var="user" paginator="true" rows="10"
+                     sortBy="#{user.username}" filterBy="#{user.username}" 
+                     resizableColumns="true" widgetVar="userTable">
+                     
+            <p:column headerText="ID" sortBy="#{user.id}">
+                <h:outputText value="#{user.id}" />
+            </p:column>
+
+            <p:column headerText="Username" sortBy="#{user.username}">
+                <h:outputText value="#{user.username}" />
+            </p:column>
+
+            <p:column headerText="First Name">
+                <h:outputText value="#{user.firstname}" />
+            </p:column>
+
+            <p:column headerText="Last Name">
+                <h:outputText value="#{user.lastname}" />
+            </p:column>
+
+            <p:column headerText="Email">
+                <h:outputText value="#{user.email}" />
+            </p:column>
+
+            <p:column headerText="Phone">
+                <h:outputText value="#{user.phone}" />
+            </p:column>
+
+            <!-- Actions column (delete functionality) -->
+            <p:column headerText="Actions">
+                <p:commandButton value="Delete" icon="pi pi-trash" 
+                                 action="#{userBean.deleteUser(user)}" 
+                                 update="userTable" 
+                                 oncomplete="PF('userTable').filter();" 
+                                 styleClass="ui-button-danger" />
+            </p:column>
+
+            <!-- PDF and Excel Export -->
+            <f:facet name="footer">
+                <p:commandButton value="Export to PDF" icon="pi pi-file-pdf" ajax="false">
+                    <p:dataExporter type="pdf" target="userTable" fileName="users" />
+                </p:commandButton>
+                <p:commandButton value="Export to Excel" icon="pi pi-file-excel" ajax="false">
+                    <p:dataExporter type="xlsx" target="userTable" fileName="users" />
+                </p:commandButton>
+            </f:facet>
+        </p:dataTable>
+
+        <!-- User Creation Dialog -->
+        <p:dialog header="Add User" widgetVar="userDialog" modal="true" closable="true" resizable="false">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="Username:" />
+                <h:inputText id="username" value="#{userBean.newUser.username}" required="true" label="Username" />
+
+                <h:outputLabel for="password" value="Password:" />
+                <h:inputSecret id="password" value="#{userBean.newUser.password}" required="true" label="Password" />
+
+                <h:outputLabel for="firstname" value="First Name:" />
+                <h:inputText id="firstname" value="#{userBean.newUser.firstname}" required="true" label="First Name" />
+
+                <h:outputLabel for="lastname" value="Last Name:" />
+                <h:inputText id="lastname" value="#{userBean.newUser.lastname}" required="true" label="Last Name" />
+
+                <h:outputLabel for="email" value="Email:" />
+                <h:inputText id="email" value="#{userBean.newUser.email}" required="true" label="Email" />
+
+                <h:outputLabel for="phone" value="Phone:" />
+                <h:inputText id="phone" value="#{userBean.newUser.phone}" required="true" label="Phone" />
+            </h:panelGrid>
+
+            <!-- Buttons to save or cancel -->
+            <p:commandButton value="Save" action="#{userBean.createUser()}" 
+                             update="userTable" oncomplete="PF('userDialog').hide();" />
+            <p:commandButton value="Cancel" onclick="PF('userDialog').hide();" type="button" />
+        </p:dialog>
+    </h:form>
+</h:body>
+</html>

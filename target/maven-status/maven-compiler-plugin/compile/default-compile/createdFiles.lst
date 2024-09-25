@@ -1,0 +1,6 @@
+beans\LoginBean.class
+com\mycompany\testassesment\JakartaRestConfiguration.class
+beans\User.class
+com\mycompany\testassesment\resources\JakartaEE10Resource.class
+database\DatabaseMySQL.class
+beans\UserBean.class
